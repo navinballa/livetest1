@@ -21,6 +21,6 @@ app.use((req, res, next) => {
 app.use("/api/books", bookRouter);
 app.use("/api/students", studentRouter);
 
-app.listen(process.env.APP_PORT || 3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
