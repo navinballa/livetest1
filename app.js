@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const userRouter = require("./api/users/user.router");
 const bookRouter = require("./api/books/book.router");
 const studentRouter = require("./api/students/student.router");
 
@@ -19,7 +18,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/users", userRouter);
 app.use("/api/books", bookRouter);
 app.use("/api/students", studentRouter);
 
