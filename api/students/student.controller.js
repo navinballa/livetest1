@@ -6,9 +6,7 @@ const {
     deleteStudent
   } = require("./student.service");
   
-  const { genSaltSync, hashSync, compareSync } = require("bcrypt");
-  const { sign } = require("jsonwebtoken");
-  
+ 
   module.exports = {
     createStudent: (req, res) => {
       const body = req.body;
