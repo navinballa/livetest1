@@ -6,9 +6,6 @@ const {
     deleteBook
   } = require("./book.service");
   
-  const { genSaltSync, hashSync, compareSync } = require("bcrypt");
-  const { sign } = require("jsonwebtoken");
-  
   module.exports = {
     createBook: (req, res) => {
       const body = req.body;
