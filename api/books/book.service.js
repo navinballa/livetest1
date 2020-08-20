@@ -36,6 +36,19 @@ module.exports = {
         });
     }
     ,
+    countBooks: callBack => {
+        pool.query(`
+        SELECT COUNT(*) AS total FROM books
+        `, [], 
+        (error, results, fields)=>{
+            console.log(results);
+            if (error) {
+                return callBack(error);
+                }            
+            return callBack(null, results[0]);
+        });
+    }
+    ,
     getBookByBookId: (bookId, callBack) => {
         pool.query(`
         SELECT bookId, bookName, bookAuth, bookQuantity, bookCost

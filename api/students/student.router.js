@@ -3,15 +3,17 @@ const {
     updateStudents,
     deleteStudent,
     getStudentByStudentRno,
-    getStudents
+    getStudents,
+    countStudents
   } = require("./student.controller");
   const router = require("express").Router();
   
   router.post("/", createStudent);
   router.get("/", getStudents);
-  router.get("/:studentRno", getStudentByStudentRno);
   router.patch("/",  updateStudents);
   router.delete("/",  deleteStudent);
+  router.get("/count",  countStudents);
+  router.get("/:studentRno", getStudentByStudentRno);
   
   module.exports = router;
   

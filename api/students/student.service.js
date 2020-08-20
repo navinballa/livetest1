@@ -35,6 +35,19 @@ module.exports = {
         });
     }
     ,
+    countStudents: callBack => {
+        pool.query(`
+        SELECT COUNT(*) AS total FROM students
+        `, [], 
+        (error, results, fields)=>{
+            console.log(results);
+            if (error) {
+                return callBack(error);
+                }            
+            return callBack(null, results[0]);
+        });
+    }
+    ,
     getStudentByStudentRno: (studentRno, callBack) => {
         pool.query(`
         SELECT studentRno, studentName, studentAdd, studentMno

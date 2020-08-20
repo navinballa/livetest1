@@ -22,5 +22,6 @@ app.use("/api/books", bookRouter);
 app.use("/api/students", studentRouter);
 
 app.listen(process.env.PORT || 3000, () => {
-  console.log("Server started");
+  console.log(process.env.PORT);
+  console.log("Server started 1");
 });

@@ -3,7 +3,8 @@ const {
     getBooks,
     getBookByBookId,
     updateBooks,
-    deleteBook
+    deleteBook,
+    countBooks
   } = require("./book.service");
   
   module.exports = {
@@ -45,6 +46,18 @@ const {
     },
     getBooks: (req, res) => {
       getBooks((err, results) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        return res.json({
+          success: 1,
+          data: results,
+        });
+      });
+    },
+    countBooks: (req, res) => {
+      countBooks((err, results) => {
         if (err) {
           console.log(err);
           return;

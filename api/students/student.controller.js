@@ -3,7 +3,8 @@ const {
     getStudents,
     getStudentByStudentRno,
     updateStudents,
-    deleteStudent
+    deleteStudent,
+    countStudents
   } = require("./student.service");
   
  
@@ -95,5 +96,18 @@ const {
         });
       });
     },
+    countStudents: (req, res) => {
+      console.log("C1");
+      countStudents((err, results) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      return res.json({
+        success: 1,
+        data: results,
+      });
+    });
+  },
   };
   
