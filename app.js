@@ -1,25 +1,93 @@
 require("dotenv").config();
+
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
+const randtoken = require('rand-token');
+const passport = require('passport');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const cors = require('cors');
 const express = require("express");
 const app = express();
+
 const bookRouter = require("./api/books/book.router");
 const studentRouter = require("./api/students/student.router");
 
-app.use(express.json());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
-    return res.status(200).json({});
+const refreshTokens = {};
+const SECRET = 'VERY_SECRET_KEY!';
+const passportOpts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: SECRET
+};
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(cors());
+
+passport.use(new JwtStrategy(passportOpts, function (jwtPayload, done) {
+  const expirationDate = new Date(jwtPayload.exp * 1000);
+  if(expirationDate < new Date()) {
+    return done(null, false);
   }
-  next();
+  done(null, jwtPayload);
+}))
+
+passport.serializeUser(function (user, done) {
+  done(null, user.username)
 });
 
-app.use("/api/books", bookRouter);
-app.use("/api/students", studentRouter);
+app.post('/login', function (req, res) { 
+  console.log("/login ");
+    const {username, password} = req.body;
+    
+    const user = { 
+        'username': username
+    };
+    const token = jwt.sign(user, SECRET, { expiresIn: 300 }) 
+    const refreshToken = randtoken.uid(256);
+    refreshTokens[refreshToken] = username;
+    res.json({jwt: token, refreshToken: refreshToken, message: 'hello'});
+});
+
+app.post('/logout', function (req, res) { 
+  console.log("/logout ");
+  
+  const refreshToken = req.body.refreshToken;
+  if (refreshToken in refreshTokens) { 
+    delete refreshTokens[refreshToken];
+  } 
+  res.sendStatus(204); 
+});
+
+app.post('/refresh', function (req, res) {
+  console.log("/refresh");
+  
+    const refreshToken = req.body.refreshToken;
+    
+
+    if (refreshToken in refreshTokens) {
+      const user = {
+        'username': refreshTokens[refreshToken],
+        'role': 'admin'
+      }
+      const token = jwt.sign(user, SECRET, { expiresIn: 30 });
+      res.json({jwt: token})
+    }
+    else {
+      res.sendStatus(401);
+    }
+});
+
+app.get('/random', passport.authenticate('jwt'), function (req, res) {
+  console.log("/random");
+  res.json({value: Math.floor(Math.random()*100) });
+})
+
+
+app.use("/api/books",passport.authenticate('jwt'), bookRouter);
+app.use("/api/students", passport.authenticate('jwt'), studentRouter);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(process.env.PORT);
