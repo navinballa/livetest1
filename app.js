@@ -45,7 +45,7 @@ app.post('/login', function (req, res) {
     const user = { 
         'username': username
     };
-    const token = jwt.sign(user, SECRET, { expiresIn: 300 }) 
+    const token = jwt.sign(user, SECRET, { expiresIn: 60 }) 
     const refreshToken = randtoken.uid(256);
     refreshTokens[refreshToken] = username;
     res.json({jwt: token, refreshToken: refreshToken, message: 'hello'});
@@ -72,7 +72,7 @@ app.post('/refresh', function (req, res) {
         'username': refreshTokens[refreshToken],
         'role': 'admin'
       }
-      const token = jwt.sign(user, SECRET, { expiresIn: 30 });
+      const token = jwt.sign(user, SECRET, { expiresIn: 60 });
       res.json({jwt: token})
     }
     else {
